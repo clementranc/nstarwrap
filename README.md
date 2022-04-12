@@ -139,7 +139,9 @@ That's it!
 
 ## Quick start and tutorials
 
-To quickly learn how to use `nstarwrap`, have a look to the tutorials in the directory `Tutorials`. In particular, you can run the [first tuto on a Jupyter Notebook, or just read the notebook on GitHub](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_1/Notebook.ipynb).
+To quickly learn how to use `nstarwrap`, have a look to the tutorials in the directory `Tutorials`. In particular, you can run the [first tuto on a Jupyter Notebook, or just read the notebook on GitHub](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_1/Notebook.ipynb). **Please make sure to run the Jupyter notebook from the corresponding tutorial root directory.
+
+- [Tutorial 1](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_1/Notebook.ipynb): how to fit star profiles with a PSF model using the Python package EMCEE or a gradient method. Simple basic example.
 
 ## Attributions
 
@@ -154,7 +156,7 @@ In case you are unsure, please contact Clément Ranc (clement.ranc@uni-heidelber
 For your convenience, we provide below the references of the two articles in BibTeX format.
 
 
-```latex
+```
 @ARTICLE{1987PASP...99..191S,
        author = {{Stetson}, Peter B.},
         title = "{DAOPHOT: A Computer Program for Crowded-Field Stellar Photometry}",
