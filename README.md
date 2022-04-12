@@ -2,7 +2,7 @@
 
 ## Introduction
 
-NSTARWRAP is a a version of the NSTAR subroutine of DAOPHOT-II (Stetson 1987), that can be used and called from a Python code, using a shared Fortran library. This README document explains how to install it. Although this directory includes the Fortran scripts you need, it is also including a Python package required to communicate between Fortran and Python. 
+NSTARWRAP is a a version of the NSTAR subroutine of DAOPHOT-II (Stetson 1987), that can be used and called from a Python code, using a shared Fortran library. This README document explains how to install it. Although this directory includes the Fortran scripts you need, it also includes a Python package required to communicate between Fortran and Python. 
 
 ```
    Version 1.0 - 8 April 2022
@@ -87,14 +87,14 @@ All the Fortran files you need are in the directory `Fortran_scripts`.
          	iosubs.o mathsubs.o
         ```
           
-   1. Edit these lines so that `F77` is the correct correct fortran compiler and `HOSTLIBS` that should include correct paths (this line should already be correct if you are already using DAOPHOT).
+   1. Edit these lines so that `F77` is the correct fortran compiler and `HOSTLIBS` that should include correct paths (this line should already be correct if you are already using DAOPHOT).
    1. Create the shared library with the command `$ make pywrapper`. A new file `pywrapper.so` has been created.
    
 This is it, you are done!
 
 ### Step 2: Installation of the python package `nstarwrap`
 
-The communication between DAOPHOT and python is managed by a Python Class defined in the `nstarwrap` python package. This package is available on github and can be install as any standard Python package. Please follow the following steps:
+The communication between DAOPHOT and python is managed by a Python Class defined in the `nstarwrap` python package. This package is available on github and can be installed as any standard Python package. Please follow the following steps:
 
 1. Download `nstarwrap`:
    ```
@@ -108,7 +108,7 @@ The communication between DAOPHOT and python is managed by a Python Class define
    ```
    $ python -m pip install -e ./
    ```
-   That way, if you want to update the package at some point, then you just need to run the following command from the MOAna local directory:
+   That way, if you want to update the package at some point, then you just need to run the following command from the `nstarwrap` local directory:
    ```
    $ git pull
    ```
