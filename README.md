@@ -137,6 +137,10 @@ In the tutorials, we will use the MOAna python package (https://github.com/cleme
    ```
 That's it!
 
+## Quick start and tutorials
+
+To quickly learn how to use `nstarwrap`, have a look to the tutorials in the directory `Tutorials`. In particular, you can run the [first tuto on a Jupyter Notebook, or just read the notebook on GitHub](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_1/Notebook.ipynb).
+
 ## Attributions
 
 If you use this library, you are kindly asked to cite all the three following references:
