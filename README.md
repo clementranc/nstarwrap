@@ -143,6 +143,8 @@ To quickly learn how to use `nstarwrap`, have a look to the tutorials in the dir
 
 - [Tutorial 1](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_1/Notebook.ipynb): how to fit star profiles with a PSF model using the Python package EMCEE or a gradient method. Simple basic example.
 
+- [Tutorial 2](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_2/Notebook.ipynb): this tutorial shows how to fit star profiles with a PSF model using the Python package EMCEE, but in a more optimized way, compared to the Tuto 1. The code used in this tuto can be used as a starting point for your own project. The Tuto 3 is recommended for the best usage of `nstarwrap` in a research project.
+
 ## Attributions
 
 If you use this library, you are kindly asked to cite all the three following references:
