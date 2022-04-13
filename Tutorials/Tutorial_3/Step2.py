@@ -10,7 +10,7 @@ from scipy.optimize import least_squares
 import sys
 import time
 
-os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OMP_NUM_THREADS"] = "1"  # Required by EMCEE documentation
 
 # ------------------------------------------------------------------------------
 # --------- UGLY PART WITH DAOPHOT INITIALISATION AND GLOBAL VARIABLES ---------
@@ -31,30 +31,18 @@ e1 = 0.75
 e2 = 5.0
 
 # Size of the box
-# box_xmin, box_xmax, box_ymin, box_ymax = 1100, 1128, 1171, 1197
-box_xmin, box_xmax, box_ymin, box_ymax = 1080, 1133, 1157, 1203
+box_xmin, box_xmax, box_ymin, box_ymax = 1100, 1128, 1171, 1197
 
 # Initial positions if new run (will be used to initialize MCMC chains)
 x1fg, y1fg = 1112.536, 1183.238
 x2fg, y2fg = 1112.368, 1189.931
-x3fg, y3fg = 1093.820, 1171.420
-x4fg, y4fg = 1108.780, 1167.000
-flux_ratio12_fg = 0.584269
-flux_ratio13_fg = 0.1421063
-flux_ratio14_fg = 0.0591307
-err_factor = 0.122580628
-
-x1fg, y1fg = 1112.531, 1183.235
-x2fg, y2fg = 1112.340, 1190.031
-x3fg, y3fg = 1093.813, 1171.420
-flux_ratio12_fg = 0.657333700306
-flux_ratio13_fg = 0.173373372520
-flux_ratio14_fg = 0.058225386230
+flux_ratio12_fg = 0.8
+err_factor = 1.0
 
 # --------- IMPORT SHARED FORTRAN LIB ---------
 nstar_wrapper = daotools.NstarPythonWrapper(image=image_file_name,
     watch_daophot=watch, fitrad_daophot=fitrad, e1_daophot=e1,
-    e2_daophot=e2, psf=psf_model_file_name, group=group_file_name, pickle=True,
+    e2_daophot=e2, psf=psf_model_file_name, group=group_file_name,
     fitting_box=[box_xmin, box_xmax, box_ymin, box_ymax], err_factor=err_factor)
 ncol, nrow = nstar_wrapper.attach()
 
@@ -138,12 +126,11 @@ if __name__ == "__main__":
     # User parameters
     flag_perform_levemberg = not True
     flag_perform_mcmc = True
-    flag_continue = not True  # Do we continue a previous run?
+    flag_continue = not True  # Do we continue a previous MCMC run?
     run_id = "tt"
     max_n = 10000  # Length of each each
-    nwalkers = 22  # Number of chains
     ndim = 5  # Number of variables
-    ndim = 11  # Number of variables
+    nwalkers = 10  # Number of chains (should be at least 2 x ndim)
     verbose = 1  # 0=code does not ask anything.
 
     # Random seed for reproductibility and debugging
@@ -217,33 +204,22 @@ if __name__ == "__main__":
             # Initial position of walkers inside fitting box
             star1 = x1fg + 1j * y1fg
             star2 = x2fg + 1j * y2fg
-            star3 = x3fg + 1j * y3fg
-            star4 = x4fg + 1j * y4fg
 
             mu, sigma = 0, 1
             inside_box = [True]
             while(any(inside_box)):
                 p1 = star1 + rng.normal(mu, sigma, nwalkers) * np.exp(1j * rng.uniform(0, 2*np.pi, nwalkers))
                 p2 = star2 + rng.normal(mu, sigma, nwalkers) * np.exp(1j * rng.uniform(0, 2*np.pi, nwalkers))
-                p3 = star3 + rng.normal(mu, sigma, nwalkers) * np.exp(1j * rng.uniform(0, 2*np.pi, nwalkers))
-                p4 = star4 + rng.normal(mu, sigma, nwalkers) * np.exp(1j * rng.uniform(0, 2*np.pi, nwalkers))
 
                 p0 = np.array([
                     p1.real,
                     p1.imag,
                     p2.real,
                     p2.imag,
-                    p3.real,
-                    p3.imag,
-                    p4.real,
-                    p4.imag,
                     flux_ratio12_fg + rng.normal(0, 0.05, nwalkers),
-                    flux_ratio13_fg + rng.normal(0, 0.05, nwalkers),
-                    flux_ratio14_fg + rng.normal(0, 0.001, nwalkers)
                     ]).T
 
-                p0[0] = np.array([x1fg, y1fg, x2fg, y2fg, x3fg, y3fg, x4fg, y4fg, 
-                    flux_ratio12_fg, flux_ratio13_fg, flux_ratio14_fg])
+                p0[0] = np.array([x1fg, y1fg, x2fg, y2fg, flux_ratio12_fg])
 
                 inside_box = np.array([log_prior(a) for a in p0]) < 0
 
