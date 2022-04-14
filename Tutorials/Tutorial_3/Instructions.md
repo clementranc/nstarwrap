@@ -44,7 +44,7 @@ The file `image.fits.pkl` should be created in a couple of seconds. You are done
 
 Step 2 consists of running an MCMC, potentially using all the CPUs that are available in your computer. The `Step2.py` script is substantially more complex than the tutorials showed until now, but it is this script that must be used to *efficiently* use DAOPHOT-II NSTAR for your research project. Run this script from the terminal with the command:
 ```
-$ python Step1.py
+$ python Step2.py
 ```
 
 ## Step 3: monitor and analyze the results
