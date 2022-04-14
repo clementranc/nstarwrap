@@ -37,7 +37,7 @@ box_xmin, box_xmax, box_ymin, box_ymax = 1100, 1128, 1171, 1197
 x1fg, y1fg = 1112.536, 1183.238
 x2fg, y2fg = 1112.368, 1189.931
 flux_ratio12_fg = 0.8
-err_factor = 1.0
+err_factor = 0.236136
 
 # --------- IMPORT SHARED FORTRAN LIB ---------
 nstar_wrapper = daotools.NstarPythonWrapper(image=image_file_name,
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     flag_perform_levemberg = not True
     flag_perform_mcmc = True
     flag_continue = not True  # Do we continue a previous MCMC run?
-    run_id = "tt"
+    run_id = "my_rescaled_mcmc"
     max_n = 10000  # Length of each each
     ndim = 5  # Number of variables
     nwalkers = 10  # Number of chains (should be at least 2 x ndim)
