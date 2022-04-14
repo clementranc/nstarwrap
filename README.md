@@ -76,7 +76,7 @@ All the Fortran files you need are in the directory `Fortran_scripts`.
         HOSTLIBS = -L/opt/local/lib/gcc11 -lm -lgcc  
         FITLIB = -L./cfitsio/lib -lcfitsio -lcurl 
         FSOFLAGS = -shared -O2 -std=legacy -Wall -Wsurprising -fbounds-check
-
+        
         pywrapper: daophot.o pckpsf.o find.o fotometry.o \
              psf.o peak.o nstar-mcmc_pywrapper.o fudge.o addstar.o substar.o \
              group.o sort.o lnxsubs.o fitsubs.o iosubs.o mathsubs.o
@@ -115,7 +115,7 @@ The communication between DAOPHOT and python is managed by a Python Class define
 
 That's it!
 
-### Step 3 (Optional): Installation of MOAna
+### Step 3 (optional but recommended): Installation of MOAna
 
 In the tutorials, we will use the MOAna python package (https://github.com/clementranc/moana) to plot the results of the fits. This package is available on github and can be install as any standard Python package. If you want to be able to easily plot correlations between parameters, as well as derive physical quantities related to microlensing, it is advised to install MOAna. Please follow the following steps:
 
@@ -137,13 +137,23 @@ In the tutorials, we will use the MOAna python package (https://github.com/cleme
    ```
 That's it!
 
+If you would like to create beautiful plots and use MOAna's capabilities, please have a look to [this tutorial](https://github.com/clementranc/moana/tree/master/docs/tutorial/corner_plots).
+
 ## Quick start and tutorials
 
-To quickly learn how to use `nstarwrap`, have a look to the tutorials in the directory `Tutorials`. In particular, you can run the [first tuto on a Jupyter Notebook, or just read the notebook on GitHub](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_1/Notebook.ipynb). **Please make sure to run the Jupyter notebook from the corresponding tutorial root directory.**
+To quickly learn how to use `nstarwrap`, have a look to the tutorials in the [Tutorials](https://github.com/clementranc/nstarwrap/tree/main/Tutorials) directory. In particular, you can run the [first tuto on a Jupyter Notebook, or just read the notebook on GitHub](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_1/Notebook.ipynb). **Please make sure to run the Jupyter notebook from the corresponding tutorial root directory.**
+
+The most confident reader is welcomed to directly jump to [Tutorial 3](https://github.com/clementranc/nstarwrap/tree/main/Tutorials/Tutorial_3), to learn how to perform a MCMC 2-star fit in the most optimized way, and with the parameters needed for a scientific publication.
+
+### Tutorials to learn how to perform a 2-star fits
+
+The first two tutorials are considered as pedagogical. The third one includes the material you may want to use if you plan to publish your studies.
 
 - [Tutorial 1](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_1/Notebook.ipynb): how to fit star profiles with a PSF model using the Python package EMCEE or a gradient method. Simple basic example.
 
 - [Tutorial 2](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_2/Notebook.ipynb): this tutorial shows how to fit star profiles with a PSF model using the Python package EMCEE, but in a more optimized way, compared to the Tuto 1. The code used in this tuto can be used as a starting point for your own project. The Tuto 3 is recommended for the best usage of `nstarwrap` in a research project.
+
+- [Tutorial 3](https://github.com/clementranc/nstarwrap/tree/main/Tutorials/Tutorial_3/Instructions.md): final tuto and scripts needed to produce publication like studies.
 
 ## Attributions
 
