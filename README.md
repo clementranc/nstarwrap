@@ -157,7 +157,7 @@ The first two tutorials are considered as pedagogical. The third one includes th
 
 Examples of results you can create from these tutos (left to right: chi-square colored samples, centroid position of two stars, 2-dimensional marginal distributions of the posterior):
 
-<img src="Tutorials/Tutorial_3/illustrations/Correlation.png" alt="Correlation plots" width="320"/> <img src="Tutorials/Tutorial_1/illustrations/Levenberg-Marquardt.png" alt="Correlation plots" width="200"/> <img src="Tutorials/Tutorial_3/illustrations/Posterior.png" alt="Correlation plots" width="320"/>
+<img src="Tutorials/Tutorial_3/illustrations/Correlation.png" alt="Correlation plots" width="250"/> <img src="Tutorials/Tutorial_1/illustrations/Levenberg-Marquardt.png" alt="Correlation plots" width="150"/> <img src="Tutorials/Tutorial_3/illustrations/Posterior.png" alt="Correlation plots" width="250"/>
 
 ## Attributions
 
