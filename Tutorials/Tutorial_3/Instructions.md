@@ -96,7 +96,7 @@ flux_ratio12_fg = 0.8
 # Error bar rescaling factor
 err_factor = 0.236136
 ```
-and
+and 
 ```python showLineNumbers
 flag_perform_levemberg = not True  # Since the provided script includes a 
                                    # Levenberg-Marquardt algorithm, you may
