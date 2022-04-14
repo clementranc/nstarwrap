@@ -2,6 +2,8 @@
 
 ## Introduction
 
+This final tutorial on 2-star fits is designed to provide you with the required scripts to perform MCMCs which results can be published in an article. Before starting, make sure you have [all the material](https://github.com/clementranc/nstarwrap/tree/main/Tutorials/Tutorial_3).
+
 ## Step 1: save image in a binary file for fast and multiple access
 
 As shown previously in the [Tutorial 2](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_2/Notebook.ipynb), creating a local binary file of the image gives a lot of flexibility and improve the running time. The only drawback of this approach is the large binary file (typically 2 GB) that is created in your disk. This file can be seen as a temporary file that you can delete at the end of your modeling session if you wish.
@@ -97,7 +99,7 @@ flux_ratio12_fg = 0.8
 err_factor = 0.236136
 ```
 and 
-```python showLineNumbers
+```python
 flag_perform_levemberg = not True  # Since the provided script includes a 
                                    # Levenberg-Marquardt algorithm, you may
                                    # want to give it a try. This fonctionnality
@@ -113,4 +115,18 @@ ndim = 5  # Number of fit variables
 nwalkers = 10  # Number of chains (should be at least 2 x ndim)
 verbose = 1  # 0=code does not ask anything.
 ```
+
+## Log file and important information
+
+Some parameters are written in a log file `run_id.txt`, including:
+- the degrees of freedom, as calculated by Terry et al. (2021),
+- the DAOPHOT zero point magnitude,
+- the fitting box center,
+- the fitting box size in pixels.
+
+It is important to note that if not provided, the fitting box limits are at 1 PSF radius from any star centroid written the `.grp` file (see https://github.com/skterry/daophot_mcmc).
+
+
+
+
 
