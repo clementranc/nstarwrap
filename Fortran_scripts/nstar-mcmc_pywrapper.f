@@ -524,9 +524,26 @@ C
       IXMAX=MIN0(NCOL, INT(XMAX+RADIUS))
       IYMIN=MAX0(1, INT(YMIN-RADIUS)+1)
       IYMAX=MIN0(NROW, INT(YMAX+RADIUS))
+
+      IF ((boxxmin .GT. 0) .AND. (boxxmax .GT. 0)) THEN
+        IXMIN = boxxmin
+        IXMAX = boxxmax
+      ELSE
+        boxxmin = IXMIN
+        boxxmax = IXMAX
+        END IF
+      IF ((boxymin .GT. 0) .AND. (boxymax .GT. 0)) THEN
+        IYMIN = boxymin
+        IYMAX = boxymax
+      ELSE
+        boxymin = IYMIN
+        boxymax = IYMAX
+        END IF
+
 C IXMIN, IXMAX, IYMIN, and IYMAX are now the limits of a rectangular 
 C containing all pixels within one fitting radius of any star in the
-C group.
+C group. User can override these values if boxxmin, boxxmax and
+C boxymin, boxymin are manually provided.
 C
 C Zero the normal matrix and the vector of residuals.
 C
@@ -1063,20 +1080,6 @@ C ratio (f), and total flux (z).
 C
 C--------------------
 C===================================================================================
-      IF ((boxxmin .GT. 0) .AND. (boxxmax .GT. 0)) THEN
-        IXMIN = boxxmin
-        IXMAX = boxxmax
-      ELSE
-        boxxmin = IXMIN
-        boxxmax = IXMAX
-        END IF
-      IF ((boxymin .GT. 0) .AND. (boxymax .GT. 0)) THEN
-        IYMIN = boxymin
-        IYMAX = boxymax
-      ELSE
-        boxymin = IYMIN
-        boxymax = IYMAX
-        END IF
 
       GRIDSIZE = ((IXMAX-IXMIN+1)*(IYMAX-IYMIN+1))
       ALLOCATE (PPU_MIN(GRIDSIZE),FU(GRIDSIZE),FU_MIN(GRIDSIZE),
