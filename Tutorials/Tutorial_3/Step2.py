@@ -128,7 +128,7 @@ if __name__ == "__main__":
     flag_perform_mcmc = True
     flag_continue = not True  # Do we continue a previous MCMC run?
     run_id = "my_rescaled_mcmc"
-    max_n = 10000  # Length of each each
+    max_n = 30000  # Length of each each
     ndim = 5  # Number of variables
     nwalkers = 10  # Number of chains (should be at least 2 x ndim)
     verbose = 1  # 0=code does not ask anything.
@@ -196,6 +196,7 @@ if __name__ == "__main__":
             if verbose > 0:
                 print("Initial size: {0}".format(backend.iteration))
             p0 = None
+            p0i = backend.get_chain(discard=0, flat=False)[-1][0]
             # If continue a previous run, ignore nwalkers and ndim
             nwalkers, ndim = backend.shape
         else:
@@ -220,13 +221,14 @@ if __name__ == "__main__":
                     ]).T
 
                 p0[0] = np.array([x1fg, y1fg, x2fg, y2fg, flux_ratio12_fg])
+                p0i = p0[0]
 
                 inside_box = np.array([log_prior(a) for a in p0]) < 0
 
 
         # Run nstar once to evaluate chi-square of initial position and
         # get the final fitting box and degrees of freedom.
-        chi2_0, total_flux_0 = run_nstar(p0[0])
+        chi2_0, total_flux_0 = run_nstar(p0i)
         txt = f'Degrees of freedom: {nstar_wrapper.dof:d}\n'
         txt += f'Zeropoint Mag: {nstar_wrapper.zpmag.value:.4f}\n'
         box_xmin, box_xmax = nstar_wrapper.opt['box_xmin'].value, nstar_wrapper.opt['box_xmax'].value
