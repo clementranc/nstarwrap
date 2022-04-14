@@ -155,9 +155,17 @@ The first two tutorials are considered as pedagogical. The third one includes th
 
 - [Tutorial 3](https://github.com/clementranc/nstarwrap/tree/main/Tutorials/Tutorial_3/Instructions.md): final tuto and scripts needed to produce publication like studies.
 
-Examples of results you can create from these tutos (left to right: chi-square colored samples, centroid position of two stars, 2-dimensional marginal distributions of the posterior):
+### Tutorial to learn how to perform a 4-star fits
 
-<img src="Tutorials/Tutorial_3/illustrations/Correlation.png" alt="Correlation plots" width="250"/> <img src="Tutorials/Tutorial_1/illustrations/Levenberg-Marquardt.png" alt="Correlation plots" width="150"/> <img src="Tutorials/Tutorial_3/illustrations/Posterior.png" alt="Correlation plots" width="250"/>
+Performing a 3-star or 4-star fit is technically not more than adding additional parameters to the vector of initial positions. The code is doing the rest of the job. The following tutorial shows how to do that.
+
+- [Tutorial 4](Tutorials/Tutorial_4/Instructions.md): an example of a 4-star fit.
+
+### Example gallery
+
+Examples of results you can create from these tutos (left to right: chi-square colored samples from the Tuto 3, centroid positions after a 4-star fit from the Tuto 4, 2-dimensional marginal distributions of the posterior of a 2-star fit from the Tuto 3):
+
+<img src="Tutorials/Tutorial_3/illustrations/Correlation.png" alt="Correlation plots" width="250"/> <img src="Tutorials/Tutorial_4/illustrations/Centroids.png" alt="Star positions" width="150"/> <img src="Tutorials/Tutorial_3/illustrations/Posterior.png" alt="Correlation plots" width="250"/>
 
 ## Attributions
 
