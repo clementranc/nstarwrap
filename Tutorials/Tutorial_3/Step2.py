@@ -128,7 +128,7 @@ if __name__ == "__main__":
     flag_perform_mcmc = True
     flag_continue = not True  # Do we continue a previous MCMC run?
     run_id = "my_rescaled_mcmc"
-    max_n = 30000  # Length of each each
+    max_n = 10000  # Length of each each
     ndim = 5  # Number of variables
     nwalkers = 10  # Number of chains (should be at least 2 x ndim)
     verbose = 1  # 0=code does not ask anything.
@@ -149,9 +149,7 @@ if __name__ == "__main__":
         fnamelsq = f"{run_id}_lsq.pkl"
 
         if not os.path.exists(fnamelsq):
-            #p0 = np.array([x1fg, y1fg, x2fg, y2fg, flux_ratio12_fg])
-            p0 = np.array([x1fg, y1fg, x2fg, y2fg, x3fg, y3fg, x4fg, y4fg, 
-                flux_ratio12_fg, flux_ratio13_fg, flux_ratio14_fg])
+            p0 = np.array([x1fg, y1fg, x2fg, y2fg, flux_ratio12_fg])
 
             if verbose > 0:
                 print("Fit with Levenberg-Marquardt algorithm in progress...")
