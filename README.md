@@ -32,7 +32,7 @@ The technical benefits of using the approach decribed in this tutorial include:
 - Priors on parameters can be added efforlessly, without any need for a new compilation.
 - The fitting process can be parallelized and run on many CPUs.
 - The back-and-forth of parameters between DAOPHOT and Python does not involve any file thanks to the shared python library I created, which speeds up the code.
-- The possibility of continuing an MCMC run you wish to be longer without any need to start again from the beginning.
+- The possibility of continuing an MCMC run you wish to be longer without any need to start again from the beginning. Even if the MCMC run has been interrupted.
 
 The physical models include:
 
@@ -154,6 +154,10 @@ The first two tutorials are considered as pedagogical. The third one includes th
 - [Tutorial 2](https://github.com/clementranc/nstarwrap/blob/main/Tutorials/Tutorial_2/Notebook.ipynb): this tutorial shows how to fit star profiles with a PSF model using the Python package EMCEE, but in a more optimized way, compared to the Tuto 1. The code used in this tuto can be used as a starting point for your own project. The Tuto 3 is recommended for the best usage of `nstarwrap` in a research project.
 
 - [Tutorial 3](https://github.com/clementranc/nstarwrap/tree/main/Tutorials/Tutorial_3/Instructions.md): final tuto and scripts needed to produce publication like studies.
+
+Examples of results you can create from these tutos (left to right: chi-square colored samples, centroid position of two stars, 2-dimensional marginal distributions of the posterior):
+
+<img src="Tutorials/Tutorial_3/illustrations/Correlation.png" alt="Correlation plots" width="320"/> <img src="Tutorials/Tutorial_1/illustrations/Levenberg-Marquardt.png" alt="Correlation plots" width="200"/> <img src="Tutorials/Tutorial_3/illustrations/Posterior.png" alt="Correlation plots" width="320"/>
 
 ## Attributions
 
