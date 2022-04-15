@@ -3,7 +3,7 @@
 #
 import emcee
 import glob
-import moana.daotools as daotools
+import nstarwrap.daotools as daotools
 import multiprocessing as mproc
 import numpy as np
 import os
