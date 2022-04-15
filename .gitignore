@@ -3,6 +3,7 @@
 .ipynb_checkpoints
 nstarwrap.egg-info/
 nstarwrap/__pycache__/
+Private/
 Tutorials/Tutorial_1/correlation.png
 Tutorials/Tutorial_1/fort.1
 Tutorials/Tutorial_1/my_mcmc.h5
