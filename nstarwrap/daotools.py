@@ -392,6 +392,8 @@ class NstarPythonWrapper:
             nb_params = len(theta)
         elif isinstance(theta, np.ndarray):
             nb_params = theta.shape[0]
+        else:
+            sys.exit("Error in nstarwrap: do not recognize input parameter type.")
 
         if nb_params == 5:  # 2-star fit, 5 parameters
             x1, y1, x2, y2, fratio = theta
