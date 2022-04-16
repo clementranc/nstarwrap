@@ -4,11 +4,6 @@
 
 NSTARWRAP is a a version of the NSTAR subroutine of DAOPHOT-II (Stetson 1987), that can be used and called from a Python code, using a shared Fortran library. This README document explains how to install it. Although this directory includes the Fortran scripts you need, it also includes a Python package required to communicate between Fortran and Python. 
 
-```
-   Version 1.0 - 8 April 2022
-        Clément Ranc
-```
-
 Please note that this library runs NSTAR-MCMC_PYWRAPPER, which has been developed from the NSTAR-MCMC subroutine.<br>NSTAR-MCMC was initially developed by Sean Terry:
 
 - Code and documentation: https://github.com/skterry/daophot_mcmc
