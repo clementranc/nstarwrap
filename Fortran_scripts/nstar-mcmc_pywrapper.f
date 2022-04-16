@@ -228,6 +228,7 @@ C         CALL STUPID ('Error opening output file '//FITFIL)
 C         FITFIL = 'GIVE UP'
 CC         GO TO 980
 C      END IF
+      OPEN(1,FILE=FITFIL,STATUS='UNKNOWN')
 C
 C
 C Inquire the name of the MCMC output file, and open it.
@@ -472,51 +473,51 @@ C
       GO TO 2260
  2240 CONTINUE
 
-C
-C Now eliminate the fainter of the two.
-C
-      IF (MAG(I) .LT. MAG(J)) I=J
-C
-C The K-th star is now the fainter of the two, the I-th, the brighter.
-C
-      IF (WATCH .GT. 0.5) THEN
-         WRITE (LINE,623) NITER, NSTR, NTOT, ID(K), ID(I)
-  623    FORMAT (3I5, 5X, 'Star', I8, ' merged with star', I8,
-     .     ', so it''s been deleted.')
-         CALL OVRWRT (LINE(1:78), 3)
-      END IF
-C
-C Now replace the centroid of the I-th star with the weighted mean of
-C the most recent estimates of the centroids of the I-th and K-th
-C stars, and the brightness of the I-th with the sum of the brightnesses
-C of the I-th and K-th.
-C
-      XC(I)=XC(I)*MAG(I)+XC(K)*MAG(K)
-      YC(I)=YC(I)*MAG(I)+YC(K)*MAG(K)
-      MAG(I)=MAG(I)+MAG(K)
-      XC(I)=XC(I)/MAG(I)
-      YC(I)=YC(I)/MAG(I)
-C
-C Remove the K-th star from the group.
-C
-      CALL DAORMV (K, MAXSTR, NSTR, ID, XC, YC, MAG, SKY)
-      NTOT=NTOT-1
-      IF (WATCH .GT. 0.5) THEN
-         WRITE (LINE,622) NITER-1, NSTR, NTOT
-         CALL OVRWRT (LINE(1:15), 2)
-      END IF
-      NTERM=NSTR*3
-C     If sky is to be determined: NTERM=NTERM+1
-C
-C After deleting a star, release all the clamps and back up the 
-C iteration counter before doing another iteration.
-C
-      DO 2250 I=1,NTERM
-      XOLD(I)=0.0
- 2250 CLAMP(I)=1.0
-      CLIP=.FALSE.
-      NITER=MAX0(1, NITER-1)
-      GO TO 2210
+C C
+C C Now eliminate the fainter of the two.
+C C
+C       IF (MAG(I) .LT. MAG(J)) I=J
+C C
+C C The K-th star is now the fainter of the two, the I-th, the brighter.
+C C
+C       IF (WATCH .GT. 0.5) THEN
+C          WRITE (LINE,623) NITER, NSTR, NTOT, ID(K), ID(I)
+C   623    FORMAT (3I5, 5X, 'Star', I8, ' merged with star', I8,
+C      .     ', so it''s been deleted.')
+C          CALL OVRWRT (LINE(1:78), 3)
+C       END IF
+C C
+C C Now replace the centroid of the I-th star with the weighted mean of
+C C the most recent estimates of the centroids of the I-th and K-th
+C C stars, and the brightness of the I-th with the sum of the brightnesses
+C C of the I-th and K-th.
+C C
+C       XC(I)=XC(I)*MAG(I)+XC(K)*MAG(K)
+C       YC(I)=YC(I)*MAG(I)+YC(K)*MAG(K)
+C       MAG(I)=MAG(I)+MAG(K)
+C       XC(I)=XC(I)/MAG(I)
+C       YC(I)=YC(I)/MAG(I)
+C C
+C C Remove the K-th star from the group.
+C C
+C       CALL DAORMV (K, MAXSTR, NSTR, ID, XC, YC, MAG, SKY)
+C       NTOT=NTOT-1
+C       IF (WATCH .GT. 0.5) THEN
+C          WRITE (LINE,622) NITER-1, NSTR, NTOT
+C          CALL OVRWRT (LINE(1:15), 2)
+C       END IF
+C       NTERM=NSTR*3
+C C     If sky is to be determined: NTERM=NTERM+1
+C C
+C C After deleting a star, release all the clamps and back up the 
+C C iteration counter before doing another iteration.
+C C
+C       DO 2250 I=1,NTERM
+C       XOLD(I)=0.0
+C  2250 CLAMP(I)=1.0
+C       CLIP=.FALSE.
+C       NITER=MAX0(1, NITER-1)
+C      GO TO 2210
 C
 C Now... on with the iteration.
 C
@@ -842,8 +843,8 @@ C should be fainter) a change of 1 magnitude is a change of 60%.
 C
       MAG(I)=MAG(I)-X(J)/
      .  (1.+AMAX1(X(J)/(0.84*MAG(I)),-X(J)/(5.25*MAG(I)))/CLAMP(J))
-      XC(I)=XC(I)-X(K)/(1.+ABS(X(K))/(CLAMP(K)*0.4))
-      YC(I)=YC(I)-X(L)/(1.+ABS(X(L))/(CLAMP(L)*0.4))
+CCC      XC(I)=XC(I)-X(K)/(1.+ABS(X(K))/(CLAMP(K)*0.4))
+CCC      YC(I)=YC(I)-X(L)/(1.+ABS(X(L))/(CLAMP(L)*0.4))
       XOLD(J)=X(J)
       XOLD(K)=X(K)
       XOLD(L)=X(L)
@@ -900,24 +901,24 @@ C
       IF (I .GT. NSTR) GO TO 2528
       DX=AMAX1( 1.-XC(I), XC(I)-NCOL, 0.)
       DY=AMAX1( 1.-YC(I), YC(I)-NROW, 0.)
-C
-C If the centroid of the star is outside the picture in x or y, then
-C DX or DY is its distance from the center of the edge pixel; otherwise 
-C DX and DY are zero.
-C
-      IF ((DX .LE. 0.001) .AND. (DY .LE. 0.001)) GO TO 2525
-      IF ( (DX+1.)**2+(DY+1.)**2 .LT. RADSQ) GO TO 2525
-      NI=INT(ALOG10(ID(I)+0.5))+2
-      IF (WATCH .GT. 0.5) THEN
-         WRITE (LINE,624) NITER, NSTR, NTOT, ID(I)
-         CALL OVRWRT (LINE(1:47), 3)
-      ELSE
-         WRITE (6,625) ID(I)
-      END IF
-      CALL DAORMV (I, MAXSTR, NSTR, ID, XC, YC, MAG, SKY)
-      NTOT=NTOT-1
-      IF (NSTR .LE. 0) GO TO 2000
-      REDO=.TRUE.
+CC
+CC If the centroid of the star is outside the picture in x or y, then
+CC DX or DY is its distance from the center of the edge pixel; otherwise 
+CC DX and DY are zero.
+CC
+C      IF ((DX .LE. 0.001) .AND. (DY .LE. 0.001)) GO TO 2525
+C      IF ( (DX+1.)**2+(DY+1.)**2 .LT. RADSQ) GO TO 2525
+C      NI=INT(ALOG10(ID(I)+0.5))+2
+C      IF (WATCH .GT. 0.5) THEN
+C         WRITE (LINE,624) NITER, NSTR, NTOT, ID(I)
+C         CALL OVRWRT (LINE(1:47), 3)
+C      ELSE
+C         WRITE (6,625) ID(I)
+C      END IF
+C      CALL DAORMV (I, MAXSTR, NSTR, ID, XC, YC, MAG, SKY)
+C      NTOT=NTOT-1
+C      IF (NSTR .LE. 0) GO TO 2000
+C      REDO=.TRUE.
 C
 C Update display on terminal.
 C
