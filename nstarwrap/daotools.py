@@ -32,7 +32,7 @@ class ListStar:
         fmt = dict()
         [fmt.update({a: np.float64}) for a in colnames]
         fmt.update({'id': np.int64})
-        self.table = pd.read_table(filename, sep='\s+', names=colnames, 
+        self.table = pd.read_table(filename, sep=r"\s+", names=colnames, 
                                        usecols=col, dtype=fmt, skiprows=3)
         
         # Load 3 first lines of input file
@@ -162,7 +162,7 @@ def load_star_list_file(file_name = 'image.lst', path = ".", show=1, header=3):
     fmt = dict()
     [fmt.update({a: np.float64}) for a in colnames]
     fmt.update({'id': np.int64})
-    input1 = pd.read_table(file_input1, sep='\s+', names=colnames, 
+    input1 = pd.read_table(file_input1, sep=r"\s+", names=colnames, 
                                usecols=col, dtype=fmt, skiprows=header,
                                comment='#')
 
