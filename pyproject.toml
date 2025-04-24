@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nstarwrap"
+version = "0.2.0"
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scipy",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/clementranc/nstarwrap"
+
+[tool.setuptools]
+py-modules = ['nstarwrap', 'Tutorials', 'Fortran_scripts']
