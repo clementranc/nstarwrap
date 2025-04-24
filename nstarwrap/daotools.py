@@ -232,8 +232,18 @@ class NstarPythonWrapper:
         self.daolib = self.__load_fortran_lib__(self.daophot_path)
         self.__init_types_before_nstar__()
 
-        self.residuals = np.zeros((self.maxcol_daophot**2), order="F")
+        nmax_fit_box = 3000
+        self.residuals = np.zeros(nmax_fit_box, order="F")
         self.residuals_ptr = self.residuals.ctypes.data_as(ct.POINTER(ct.c_double))
+        self.sigmas = np.zeros(nmax_fit_box, order="F")
+        self.sigmas_ptr = self.sigmas.ctypes.data_as(ct.POINTER(ct.c_double))
+        self.model = np.zeros(nmax_fit_box, order="F")
+        self.model_ptr = self.model.ctypes.data_as(ct.POINTER(ct.c_double))
+
+        # Table of additional optional parameters
+        nmax_opt_params = 4
+        self.opt_params = np.zeros(nmax_opt_params, order="F")
+        self.opt_params_ptr = self.opt_params.ctypes.data_as(ct.POINTER(ct.c_double))
 
     def __find_daophot_path__(self):
         """Find the path to DAOPHOT."""
@@ -347,6 +357,26 @@ class NstarPythonWrapper:
 
     def __init_types_before_nstar__(self):
         """Defines argument types before running nstar"""
+        self.pynstartable = self.daolib.pynstartable
+        self.pynstartable.argtypes=[
+            ct.c_int, ct.c_int, ct.POINTER(ct.c_float), ct.c_int,  # nrow, ncol, data_ptr, maxcol
+            ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x1, y1
+            ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x2, y2
+            ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x3, y3
+            ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x4, y4
+            ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),      # fratio12, fratio13
+            ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),      # fratio14, z0
+            ct.POINTER(ct.c_double), ct.c_float, ct.c_float,       # chi2, watch, fitrad
+            ct.c_float, ct.c_float,                                # e1, e2
+            ct.POINTER(ct.c_char), ct.c_int,                       # psf, psfl
+            ct.POINTER(ct.c_char), ct.c_int,                       # grp, grpl,
+            ct.POINTER(ct.c_int), ct.POINTER(ct.c_int),            # xmin, xmax
+            ct.POINTER(ct.c_int), ct.POINTER(ct.c_int),            # ymin, ymax
+            ct.c_double, ct.POINTER(ct.c_double),                  # rfac, residuals,
+            ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),      # sigmas, model
+            ct.c_int, ct.POINTER(ct.c_float),                      # number of stars, zpmag Zero-point magnitude
+            ct.POINTER(ct.c_float)]                                # optional params
+
         self.pynstar = self.daolib.pynstar
         self.pynstar.argtypes=[
             ct.c_int, ct.c_int, ct.POINTER(ct.c_float), ct.c_int,  # nrow, ncol, data_ptr, maxcol
@@ -362,15 +392,16 @@ class NstarPythonWrapper:
             ct.POINTER(ct.c_char), ct.c_int,                       # grp, grpl,
             ct.POINTER(ct.c_int), ct.POINTER(ct.c_int),            # xmin, xmax
             ct.POINTER(ct.c_int), ct.POINTER(ct.c_int),            # ymin, ymax
-            ct.c_double, ct.POINTER(ct.c_double), ct.c_int,        # rfac, residuals, number of stars
-            ct.POINTER(ct.c_float)]                                # zpmag Zero-point magnitude
+            ct.c_double,                                           # rfac
+            ct.c_int, ct.POINTER(ct.c_float)]                      # number of stars, zpmag Zero-point magnitude
 
     def nstar_goodness_of_fit(self, theta):
         """Run NSTAR once at given position and flux ratio and return the chi2 and total flux."""
+        
         nrow, ncol = self.nrow, self.ncol
         data_ptr = self.picture_ptr
         maxcol = self.maxcol_daophot
-        residuals_ptr = self.residuals_ptr
+        opt_params_ptr = self.opt_params_ptr 
 
         tof_psf = self.__assign_chararray__(u'{0}'.format(self.psf_name))
         tof_psf_ptr = tof_psf.ctypes.data_as(ct.POINTER(ct.c_char))
@@ -414,8 +445,8 @@ class NstarPythonWrapper:
             yfort3 = ct.c_float(y3)
             fratio13 = ct.c_double(fratio13)
             fit_stars = ct.c_int(3)  # number of stars
-        elif nb_params == 11:  # 4-star fit, 11 parameters
-            x1,y1,x2,y2,x3,y3,x4,y4,fratio12,fratio13,fratio14 = theta
+        elif nb_params-1 == 11:  # 4-star fit, 11 parameters
+            x1,y1,x2,y2,x3,y3,x4,y4,fratio12,fratio13,fratio14, k = theta
             xfort1 = ct.c_float(x1)
             yfort1 = ct.c_float(y1)
             xfort2 = ct.c_float(x2)
@@ -450,7 +481,7 @@ class NstarPythonWrapper:
             tof_grp_ptr, tof_grpl,
             ct.byref(self.opt['box_xmin']), ct.byref(self.opt['box_xmax']),
             ct.byref(self.opt['box_ymin']), ct.byref(self.opt['box_ymax']),
-            tof_rfac, residuals_ptr, fit_stars, ct.byref(self.zpmag))
+            tof_rfac, fit_stars, ct.byref(self.zpmag), opt_params_ptr)
 
         self.dof = (self.opt['box_xmax'].value - self.opt['box_xmin'].value + 1)\
             * (self.opt['box_ymax'].value - self.opt['box_ymin'].value + 1)\
@@ -458,3 +489,99 @@ class NstarPythonWrapper:
 
         return chi2.value, z0.value
 
+    def nstartable_goodness_of_fit(self, theta):
+        """Run NSTAR once at given position and flux ratio and return the chi2 and total flux."""
+        
+        nrow, ncol = self.nrow, self.ncol
+        data_ptr = self.picture_ptr
+        maxcol = self.maxcol_daophot
+        residuals_ptr = self.residuals_ptr
+        sigmas_ptr = self.sigmas_ptr
+        model_ptr = self.model_ptr
+
+        tof_psf = self.__assign_chararray__(u'{0}'.format(self.psf_name))
+        tof_psf_ptr = tof_psf.ctypes.data_as(ct.POINTER(ct.c_char))
+        tof_grp = self.__assign_chararray__(u'{0}'.format(self.group_name))
+        tof_grp_ptr = tof_grp.ctypes.data_as(ct.POINTER(ct.c_char))
+        tof_psfl = ct.c_int(len(self.psf_name))
+        tof_grpl = ct.c_int(len(self.group_name))
+
+        xfort3 = ct.c_float(0)
+        yfort3 = ct.c_float(0)
+        fratio13 = ct.c_double(0)
+        xfort4 = ct.c_float(0)
+        yfort4 = ct.c_float(0)
+        fratio14 = ct.c_double(0)
+
+        self.zpmag = ct.c_float(0)
+
+        if isinstance(theta, list):
+            nb_params = len(theta)
+        elif isinstance(theta, np.ndarray):
+            nb_params = theta.shape[0]
+        else:
+            sys.exit("Error in nstarwrap: do not recognize input parameter type.")
+
+        if nb_params == 5:  # 2-star fit, 5 parameters
+            x1, y1, x2, y2, fratio = theta
+            xfort1 = ct.c_float(x1)
+            yfort1 = ct.c_float(y1)
+            xfort2 = ct.c_float(x2)
+            yfort2 = ct.c_float(y2)
+            fratio12 = ct.c_double(fratio)
+            fit_stars = ct.c_int(2)  # number of stars
+        elif nb_params == 8:  # 3-star fit, 8 parameters
+            x1, y1, x2, y2, x3, y3, fratio12, fratio13 = theta
+            xfort1 = ct.c_float(x1)
+            yfort1 = ct.c_float(y1)
+            xfort2 = ct.c_float(x2)
+            yfort2 = ct.c_float(y2)
+            fratio12 = ct.c_double(fratio12)
+            xfort3 = ct.c_float(x3)
+            yfort3 = ct.c_float(y3)
+            fratio13 = ct.c_double(fratio13)
+            fit_stars = ct.c_int(3)  # number of stars
+        elif nb_params-1 == 11:  # 4-star fit, 11 parameters
+            x1,y1,x2,y2,x3,y3,x4,y4,fratio12,fratio13,fratio14, k = theta
+            xfort1 = ct.c_float(x1)
+            yfort1 = ct.c_float(y1)
+            xfort2 = ct.c_float(x2)
+            yfort2 = ct.c_float(y2)
+            fratio12 = ct.c_double(fratio12)
+            xfort3 = ct.c_float(x3)
+            yfort3 = ct.c_float(y3)
+            fratio13 = ct.c_double(fratio13)
+            xfort4 = ct.c_float(x4)
+            yfort4 = ct.c_float(y4)
+            fratio14 = ct.c_double(fratio14)
+            fit_stars = ct.c_int(4)  # number of stars
+
+        chi2 = ct.c_double(-1.0)
+        z0 = ct.c_double(-1.0)
+
+        tof_watch = self.opt['watch']
+        tof_fitrad = self.opt['fitrad']
+        tof_e1 = self.opt['e1']
+        tof_e2 = self.opt['e2']
+        tof_rfac = self.opt['err_factor']
+
+        self.pynstar(nrow, ncol, data_ptr, maxcol, 
+            ct.byref(xfort1), ct.byref(yfort1),
+            ct.byref(xfort2), ct.byref(yfort2),
+            ct.byref(xfort3), ct.byref(yfort3),
+            ct.byref(xfort4), ct.byref(yfort4),
+            ct.byref(fratio12), ct.byref(fratio13),
+            ct.byref(fratio14), ct.byref(z0), ct.byref(chi2),
+            tof_watch, tof_fitrad, tof_e1, tof_e2,
+            tof_psf_ptr, tof_psfl,
+            tof_grp_ptr, tof_grpl,
+            ct.byref(self.opt['box_xmin']), ct.byref(self.opt['box_xmax']),
+            ct.byref(self.opt['box_ymin']), ct.byref(self.opt['box_ymax']),
+            tof_rfac, residuals_ptr, sigmas_ptr, model_ptr, fit_stars, 
+            ct.byref(self.zpmag))
+
+        self.dof = (self.opt['box_xmax'].value - self.opt['box_xmin'].value + 1)\
+            * (self.opt['box_ymax'].value - self.opt['box_ymin'].value + 1)\
+            - 3 * fit_stars.value
+
+        return chi2.value, z0.value
