@@ -357,25 +357,25 @@ class NstarPythonWrapper:
 
     def __init_types_before_nstar__(self):
         """Defines argument types before running nstar"""
-        self.pynstartable = self.daolib.pynstartable
-        self.pynstartable.argtypes=[
-            ct.c_int, ct.c_int, ct.POINTER(ct.c_float), ct.c_int,  # nrow, ncol, data_ptr, maxcol
-            ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x1, y1
-            ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x2, y2
-            ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x3, y3
-            ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x4, y4
-            ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),      # fratio12, fratio13
-            ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),      # fratio14, z0
-            ct.POINTER(ct.c_double), ct.c_float, ct.c_float,       # chi2, watch, fitrad
-            ct.c_float, ct.c_float,                                # e1, e2
-            ct.POINTER(ct.c_char), ct.c_int,                       # psf, psfl
-            ct.POINTER(ct.c_char), ct.c_int,                       # grp, grpl,
-            ct.POINTER(ct.c_int), ct.POINTER(ct.c_int),            # xmin, xmax
-            ct.POINTER(ct.c_int), ct.POINTER(ct.c_int),            # ymin, ymax
-            ct.c_double, ct.POINTER(ct.c_double),                  # rfac, residuals,
-            ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),      # sigmas, model
-            ct.c_int, ct.POINTER(ct.c_float),                      # number of stars, zpmag Zero-point magnitude
-            ct.POINTER(ct.c_float)]                                # optional params
+        # self.pynstartable = self.daolib.pynstartable
+        # self.pynstartable.argtypes=[
+        #     ct.c_int, ct.c_int, ct.POINTER(ct.c_float), ct.c_int,  # nrow, ncol, data_ptr, maxcol
+        #     ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x1, y1
+        #     ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x2, y2
+        #     ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x3, y3
+        #     ct.POINTER(ct.c_float), ct.POINTER(ct.c_float),        # x4, y4
+        #     ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),      # fratio12, fratio13
+        #     ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),      # fratio14, z0
+        #     ct.POINTER(ct.c_double), ct.c_float, ct.c_float,       # chi2, watch, fitrad
+        #     ct.c_float, ct.c_float,                                # e1, e2
+        #     ct.POINTER(ct.c_char), ct.c_int,                       # psf, psfl
+        #     ct.POINTER(ct.c_char), ct.c_int,                       # grp, grpl,
+        #     ct.POINTER(ct.c_int), ct.POINTER(ct.c_int),            # xmin, xmax
+        #     ct.POINTER(ct.c_int), ct.POINTER(ct.c_int),            # ymin, ymax
+        #     ct.c_double, ct.POINTER(ct.c_double),                  # rfac, residuals,
+        #     ct.POINTER(ct.c_double), ct.POINTER(ct.c_double),      # sigmas, model
+        #     ct.c_int, ct.POINTER(ct.c_float),                      # number of stars, zpmag Zero-point magnitude
+        #     ct.POINTER(ct.c_float)]                                # optional params
 
         self.pynstar = self.daolib.pynstar
         self.pynstar.argtypes=[
@@ -397,7 +397,7 @@ class NstarPythonWrapper:
 
     def nstar_goodness_of_fit(self, theta):
         """Run NSTAR once at given position and flux ratio and return the chi2 and total flux."""
-        
+
         nrow, ncol = self.nrow, self.ncol
         data_ptr = self.picture_ptr
         maxcol = self.maxcol_daophot
@@ -481,7 +481,7 @@ class NstarPythonWrapper:
             tof_grp_ptr, tof_grpl,
             ct.byref(self.opt['box_xmin']), ct.byref(self.opt['box_xmax']),
             ct.byref(self.opt['box_ymin']), ct.byref(self.opt['box_ymax']),
-            tof_rfac, fit_stars, ct.byref(self.zpmag), opt_params_ptr)
+            tof_rfac, fit_stars, ct.byref(self.zpmag), opt_params_ptr)  # Pb ici
 
         self.dof = (self.opt['box_xmax'].value - self.opt['box_xmin'].value + 1)\
             * (self.opt['box_ymax'].value - self.opt['box_ymin'].value + 1)\
