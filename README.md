@@ -170,7 +170,7 @@ If you use this library, you are kindly asked to cite all the three following re
 2. Terry et al. 2021, AJ, 161, 54.
 3. The reference of this library.
 
-In case you are unsure, please contact Clément Ranc (clement.ranc@uni-heidelberg.de), or Sean Terry.
+In case you are unsure, please contact Clément Ranc @ IAP / Sorbonne Univ., or Sean Terry @ NASA Goddard / UMD.
 
 For your convenience, we provide below the references of the two articles in BibTeX format.
 
