@@ -179,7 +179,7 @@ if __name__ == "__main__":
 
     if flag_perform_mcmc:
         filename = f'{run_id}.h5'
-        if flag_continue & ~os.path.exists(filename):
+        if flag_continue & (not os.path.exists(filename)):
             if verbose > 0:
                 print(f"Previous run not found. Starting a new one with ID: {run_id}")
             flag_continue = False
