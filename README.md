@@ -150,11 +150,11 @@ The first two tutorials are considered as pedagogical. The third one includes th
 
 - [Tutorial 3](https://github.com/clementranc/nstarwrap/tree/main/Tutorials/Tutorial_3/Instructions.md): final tuto and scripts needed to produce publication like studies.
 
-### Tutorial to learn how to perform a 4-star fits
+### Tutorial to learn how to perform a 4-star fits (**In the process to be be updated**)
 
 Performing a 3-star or 4-star fit is technically not more than adding additional parameters to the vector of initial positions. The code is doing the rest of the job. The following tutorial shows how to do that.
 
-- [Tutorial 4](Tutorials/Tutorial_4/Instructions.md): an example of a 4-star fit.
+- [Tutorial 4](Tutorials/Tutorial_4/Instructions.md): an example of a 4-star fit. **Please, refrain to use this Tutorial as the package is currently under major changes to prepare major update soon.**
 
 ### Example gallery
 
