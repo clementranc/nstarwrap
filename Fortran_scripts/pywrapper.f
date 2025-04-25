@@ -81,7 +81,7 @@ C
      .  xmcmc1,ymcmc1,xmcmc2,ymcmc2, xmcmc3,ymcmc3,xmcmc4,ymcmc4, 
      .  fratio12, fratio13, fratio14, z0, chi2,
      .  watch, fitrad, e1, e2, psffil, psfl, grpfil, grpl,
-     .  xmin, xmax, ymin, ymax, rfac, residuals, fit_stars, zpmag)
+     .  xmin, xmax, ymin, ymax, rfac, fit_stars, zpmag, residuals)
      .  bind(c,name="pynstar")
 
       use iso_c_binding
@@ -106,11 +106,21 @@ C
       parameter (maxpsf=407, maxexp=10, maxpar=6)
       real par(maxpar), psf(maxpsf,maxpsf,maxexp)
 
+C This commented lines are related to a future update of the code
+C    call nstar  (par, maxpar, psf, maxpsf, maxexp, data,
+C    .     ncol, nrow, maxcol, watch, fitrad, e1, e2,
+C    .     xmcmc1,ymcmc1,xmcmc2,ymcmc2,xmcmc3,ymcmc3,xmcmc4,ymcmc4,
+C    .     fratio12,fratio13,fratio14,z0,chi2,
+C    .     psffil, psfl, grpfil, grpl, xmin, xmax, ymin, ymax, rfac,
+C    .     residuals, fit_stars, zpmag)
+C
+C    end subroutine
+
       call nstar  (par, maxpar, psf, maxpsf, maxexp, data, 
      .     ncol, nrow, maxcol, watch, fitrad, e1, e2,
      .     xmcmc1,ymcmc1,xmcmc2,ymcmc2,xmcmc3,ymcmc3,xmcmc4,ymcmc4,
      .     fratio12,fratio13,fratio14,z0,chi2,
      .     psffil, psfl, grpfil, grpl, xmin, xmax, ymin, ymax, rfac,
-     .     residuals, fit_stars, zpmag)
+     .     fit_stars, zpmag, residuals)
 
       end subroutine

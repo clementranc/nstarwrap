@@ -3,7 +3,7 @@
      .   xmcmc1,ymcmc1,xmcmc2,ymcmc2,xmcmc3,ymcmc3,xmcmc4,ymcmc4,
      .   fratio12,fratio13,fratio14,pyz0,chi2,
      .   psffilp, psfl, grpfilp, grpl, boxxmin,boxxmax,boxymin,boxymax,
-     .   rfac, residuals, fit_stars, zpmag)
+     .   rfac, fit_stars, zpmag, residuals)
 C
 C=======================================================================
 C
@@ -143,6 +143,7 @@ C     Assign file names
       MCMCFIL = 'accepted_mcmc.dat'
       CHISQPIXFIL = 'chisq_pixel.dat'
       BESTFIL = 'best_fit.dat'
+
 C
 C-----------------------------------------------------------------------
 C
@@ -1192,8 +1193,9 @@ C---------Simple Pixel Noise Model----------------------------
 C-------------------------------------------------------------
         chi2 = ((DATA(IX,IY)-SKYBAR)-FU(U)*Z0)/SGU2(U)
         EE0 = EE0 + chi2**2 / RFAC
-        residuals(U) = chi2
+C        residuals(U) = chi2  ----------> Create a segmentation fault.
          U = U + 1
+C            write(*,*) "CONTROL in F ==> ", chi2
          ENDDO
          ENDDO
         U = 1
