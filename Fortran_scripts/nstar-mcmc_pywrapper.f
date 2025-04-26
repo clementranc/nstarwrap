@@ -93,7 +93,7 @@ C
       REAL*8 Z0, LSSEP, BSEP, BSEP2
       REAL*8 CHISQ, CHISQ_MIN
       REAL*8 F, F1, F2
-      REAL SSEP, ZM, EEM
+      REAL SSEP, SSEP2, ZM, EEM
       REAL, ALLOCATABLE :: FU(:), FU_MIN(:)
       REAL, ALLOCATABLE :: SGU(:), SGL(:), SGU2(:), PPU(:)
       INTEGER IF2, Steps, IT, GRIDSIZE
@@ -1072,13 +1072,13 @@ C      GO TO 2000
  9400 CONTINUE 
 C===================================================================================
 C--------------------
-C             MCMC Version 1.5 - 2022 March 14
+C             MCMC Version 1.5.2 - 2023 November 3
 C             S.K. Terry
 C
 C Markov chain Monte Carlo routine to fit stellar
-C profiles (one, two, or three). Fitting parameters 
+C profiles (one, two, or three stars). Fitting parameters
 C are star centroids (x_i,y_i), flux
-C ratio (f), and total flux (z).
+C ratio (f_i), and total flux (z).
 C
 C--------------------
 C===================================================================================
@@ -1162,6 +1162,7 @@ C-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
             END IF
             FU(U)=(F )*TESTA + (1-F)*TESTB
             PPU(U) = (DATA(IX,IY) - SKYBAR) !raw pixel value - sky
+C        PPU(U) = (DATA(IX,IY)) !raw pixel value only
             U = U + 1
          ENDDO
          ENDDO
