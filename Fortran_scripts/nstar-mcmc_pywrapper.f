@@ -1246,9 +1246,6 @@ C-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
        IF (TESTNAN .or. (TESTC .LT. 1.E-9) .OR. (TESTC .GT. 1E9)) THEN
           TESTC = 0.0
           END IF
-       IF (TESTNAN .or. (TESTD .LT. 1.E-9) .OR. (TESTD .GT. 1E9)) THEN
-          TESTD = 0.0
-          END IF
        FU(U)=F*TESTA + (1-F-FB)*TESTB + FB*TESTC
        PPU(U) = (DATA(IX,IY) - SKYBAR) !raw pixel value - sky
        U = U + 1
