@@ -1373,7 +1373,7 @@ C-------------------------------------------------------------
          U = U + 1
          ENDDO
          ENDDO
-      U = 1 
+      U = 1
       DO IX=IXMIN,IXMAX
       DO IY=IYMIN,IYMAX
         FU_MIN(U) = FU(U)
@@ -1396,6 +1396,17 @@ C
 C Normal return.
 C
  9000 CONTINUE
+
+      DEALLOCATE (PPU_MIN)
+      DEALLOCATE (FU)
+      DEALLOCATE (FU_MIN)
+      DEALLOCATE (SGU)
+      DEALLOCATE (SGL)
+      DEALLOCATE (SGU2)
+      DEALLOCATE (EMIN_CHI2)
+      DEALLOCATE (EMINPIX)
+      DEALLOCATE (PPU)
+
 C      CLOSE(24)
 C      CLOSE(25)
 C      CLOSE(26)
