@@ -410,13 +410,6 @@ class NstarPythonWrapper:
         tof_psfl = ct.c_int(len(self.psf_name))
         tof_grpl = ct.c_int(len(self.group_name))
 
-        xfort3 = ct.c_float(0)
-        yfort3 = ct.c_float(0)
-        fratio13 = ct.c_double(0)
-        xfort4 = ct.c_float(0)
-        yfort4 = ct.c_float(0)
-        fratio14 = ct.c_double(0)
-
         self.zpmag = ct.c_float(0)
 
         if isinstance(theta, list):
@@ -427,12 +420,18 @@ class NstarPythonWrapper:
             sys.exit("Error in nstarwrap: do not recognize input parameter type.")
 
         if nb_params == 5:  # 2-star fit, 5 parameters
-            x1, y1, x2, y2, fratio = theta
+            x1, y1, x2, y2, fratio12 = theta
             xfort1 = ct.c_float(x1)
             yfort1 = ct.c_float(y1)
             xfort2 = ct.c_float(x2)
             yfort2 = ct.c_float(y2)
-            fratio12 = ct.c_double(fratio)
+            fratio12 = ct.c_double(fratio12)
+            xfort3 = ct.c_float(0)
+            yfort3 = ct.c_float(0)
+            fratio13 = ct.c_double(0)
+            xfort4 = ct.c_float(0)
+            yfort4 = ct.c_float(0)
+            fratio14 = ct.c_double(0)
             fit_stars = ct.c_int(2)  # number of stars
         elif nb_params == 8:  # 3-star fit, 8 parameters
             x1, y1, x2, y2, x3, y3, fratio12, fratio13 = theta
@@ -443,10 +442,14 @@ class NstarPythonWrapper:
             fratio12 = ct.c_double(fratio12)
             xfort3 = ct.c_float(x3)
             yfort3 = ct.c_float(y3)
+            xfort4 = ct.c_float(0)
+            yfort4 = ct.c_float(0)
+            fratio14 = ct.c_double(0)
             fratio13 = ct.c_double(fratio13)
             fit_stars = ct.c_int(3)  # number of stars
-        elif nb_params-1 == 11:  # 4-star fit, 11 parameters
-            x1,y1,x2,y2,x3,y3,x4,y4,fratio12,fratio13,fratio14, k = theta
+        elif nb_params == 11:  # 4-star fit, 11 parameters
+#            x1,y1,x2,y2,x3,y3,x4,y4,fratio12,fratio13,fratio14, k = theta
+            x1, y1, x2, y2, x3, y3, x4, y4, fratio12, fratio13, fratio14 = theta
             xfort1 = ct.c_float(x1)
             yfort1 = ct.c_float(y1)
             xfort2 = ct.c_float(x2)
@@ -481,7 +484,7 @@ class NstarPythonWrapper:
             tof_grp_ptr, tof_grpl,
             ct.byref(self.opt['box_xmin']), ct.byref(self.opt['box_xmax']),
             ct.byref(self.opt['box_ymin']), ct.byref(self.opt['box_ymax']),
-            tof_rfac, fit_stars, ct.byref(self.zpmag), opt_params_ptr)  # Pb ici
+            tof_rfac, fit_stars, ct.byref(self.zpmag), opt_params_ptr)
 
         self.dof = (self.opt['box_xmax'].value - self.opt['box_xmin'].value + 1)\
             * (self.opt['box_ymax'].value - self.opt['box_ymin'].value + 1)\
@@ -542,7 +545,8 @@ class NstarPythonWrapper:
             fratio13 = ct.c_double(fratio13)
             fit_stars = ct.c_int(3)  # number of stars
         elif nb_params-1 == 11:  # 4-star fit, 11 parameters
-            x1,y1,x2,y2,x3,y3,x4,y4,fratio12,fratio13,fratio14, k = theta
+#            x1,y1,x2,y2,x3,y3,x4,y4,fratio12,fratio13,fratio14, k = theta
+            x1, y1, x2, y2, x3, y3, x4, y4, fratio12, fratio13, fratio14 = theta
             xfort1 = ct.c_float(x1)
             yfort1 = ct.c_float(y1)
             xfort2 = ct.c_float(x2)
