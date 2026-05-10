@@ -1,0 +1,82 @@
+# Makefile to build pywrapper.so for nstarwrap
+# Must be run from the CMake build/ directory of your DAOPHOT installation
+# (the directory that contains CMakeFiles/daophot-mcmc.dir/src/).
+# Requires: the Fortran environment activated (e.g. conda activate daophot).
+#
+# Usage:
+#   make -f Makefile.pywrapper
+#
+# Overrides (optional):
+#   make -f Makefile.pywrapper F77=/path/to/gfortran
+#   make -f Makefile.pywrapper CFITSIO_DIR=/path/to/cfitsio
+#   make -f Makefile.pywrapper NSTARWRAP=/path/to/nstarwrap/Fortran_scripts
+
+UNAME_S := $(shell uname -s)
+
+# Fortran compiler: override on the command line if needed.
+# Uses simple assignment so it takes precedence over make's built-in F77=f77 default.
+F77 = gfortran
+
+# Path to the nstarwrap Fortran_scripts directory.
+# Default: the directory containing this Makefile (correct when used in-place).
+# If you copied this file to your DAOPHOT build/ directory, either edit this
+# line or pass the path on the command line:
+#   make -f Makefile.pywrapper NSTARWRAP=/path/to/nstarwrap/Fortran_scripts
+NSTARWRAP ?= $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+
+# Object files produced by the CMake daophot-mcmc target (reused as-is).
+OBJDIR = CMakeFiles/daophot-mcmc.dir/src
+
+FFLAGS = -c -std=legacy -O3
+
+# macOS: shared libraries use -dynamiclib; undefined symbols resolve at
+# runtime from the host Python process, so -Wl,-undefined,dynamic_lookup
+# avoids false link errors for libc/libm symbols.
+# Linux: use -shared -fPIC instead.
+ifeq ($(UNAME_S), Darwin)
+    FSOFLAGS = -dynamiclib -std=legacy -O3 -Wl,-undefined,dynamic_lookup
+else
+    FSOFLAGS = -shared -fPIC -std=legacy -O3
+endif
+
+# cfitsio library location, resolved in order of preference:
+#   1. Explicit CFITSIO_DIR override
+#   2. Active conda environment (CONDA_PREFIX is set by "conda activate")
+#   3. No -L flag (rely on the system linker path)
+ifdef CFITSIO_DIR
+    LIBS = -L$(CFITSIO_DIR)/lib -lcfitsio
+else ifdef CONDA_PREFIX
+    LIBS = -L$(CONDA_PREFIX)/lib -lcfitsio
+else
+    LIBS = -lcfitsio
+endif
+
+OBJS = \
+	$(OBJDIR)/daophot.f.o \
+	$(OBJDIR)/pckpsf.f.o \
+	$(OBJDIR)/find.f.o \
+	$(OBJDIR)/fotometry.f.o \
+	$(OBJDIR)/psf.f.o \
+	$(OBJDIR)/peak.f.o \
+	nstar-mcmc_pywrapper.o \
+	$(OBJDIR)/fudge.f.o \
+	$(OBJDIR)/addstar.f.o \
+	$(OBJDIR)/substar.f.o \
+	$(OBJDIR)/group.f.o \
+	$(OBJDIR)/sort.f.o \
+	$(OBJDIR)/lnxsubs.f.o \
+	$(OBJDIR)/fitsubs.f.o \
+	$(OBJDIR)/iosubs.f.o \
+	$(OBJDIR)/mathsubs.f.o
+
+pywrapper.so: nstar-mcmc_pywrapper.o
+	$(F77) $(FSOFLAGS) $(LIBS) \
+		$(NSTARWRAP)/pywrapper.f \
+		$(OBJS) \
+		-o pywrapper.so
+
+nstar-mcmc_pywrapper.o: $(NSTARWRAP)/nstar-mcmc_pywrapper.f
+	$(F77) $(FFLAGS) $(NSTARWRAP)/nstar-mcmc_pywrapper.f -o nstar-mcmc_pywrapper.o
+
+clean:
+	rm -f nstar-mcmc_pywrapper.o pywrapper.so

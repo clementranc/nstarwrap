@@ -39,52 +39,75 @@ The physical models include:
 
 ### Step 1: Compilation of the Fortran shared library
 
-If you survive to this section, then you did the most difficult. You'll be ready to enjoy!<br>*Note that I ran all the tests using the fortran compiler gfortran from gcc11, installed with MacPorts (gfortran-mp-11).*
+If you survive to this section, then you did the most difficult. You'll be ready to enjoy!
 
 All the Fortran files you need are in the directory `Fortran_scripts`.
 
 1. You must have a working version of DAOPHOT, and be able to compile it without any error.
-0. Copy `nstar-mcmc_pywrapper.f` and `pywrapper.f` in the DAOPHOT directory. This will not replace any already existing file.
-0. You may copy `Makefile` in the DAOPHOT directory, but you will be asked if you want to replace the existing Makefile. It is advised to rename `Makefile` to keep the two `Makefile` versions. You can also only add the relevant lines in your previously existing `Makefile`, i.e.:
+***
+2. Copy `nstar-mcmc_pywrapper.f` and `pywrapper.f` into the DAOPHOT source directory. This will not replace any already existing file.
+0. Add the `pywrapper` target to your DAOPHOT Makefile (see `Fortran_scripts/Makefile` for the full snippet). The key variables are:
 
    ```
+   F77      = gfortran-mp-11                      # adjust to your compiler
+   HOSTLIBS = -L/opt/local/lib/gcc11 -lm -lgcc    # adjust to your paths
+   FITLIB   = -L./cfitsio/lib -lcfitsio -lcurl
    FSOFLAGS = -shared -O2 -std=legacy -Wall -Wsurprising -fbounds-check
-   
-   pywrapper: daophot.o pckpsf.o find.o fotometry.o \
-        psf.o peak.o nstar-mcmc_pywrapper.o fudge.o addstar.o substar.o \
-        group.o sort.o lnxsubs.o fitsubs.o iosubs.o mathsubs.o
-    	$(F77) $(FSOFLAGS) $(HOSTLIBS) $(FITLIB) pywrapper.f -o pywrapper.so \
-    	daophot.o pckpsf.o find.o fotometry.o \
-        psf.o peak.o nstar-mcmc_pywrapper.o fudge.o addstar.o substar.o \
-        group.o sort.o lnxsubs.o fitsubs.o \
-    	iosubs.o mathsubs.o
    ```
-   
-   Please make sure to use tabulations (and **NOT** spaces before `$(F77)`.
-0. Compilation of DAOPHOT with the shared library:
-   1. The distributed `Makefile` includes the following lines (the most important):
-     
-        ```
-        F77 = gfortran-mp-11
-        FFLAGS = -c -O2 -std=legacy
-        LFLAGS = -O2 -Wall -Wsurprising -fbounds-check -std=legacy
-        HOSTLIBS = -L/opt/local/lib/gcc11 -lm -lgcc  
-        FITLIB = -L./cfitsio/lib -lcfitsio -lcurl 
-        FSOFLAGS = -shared -O2 -std=legacy -Wall -Wsurprising -fbounds-check
-        
-        pywrapper: daophot.o pckpsf.o find.o fotometry.o \
-             psf.o peak.o nstar-mcmc_pywrapper.o fudge.o addstar.o substar.o \
-             group.o sort.o lnxsubs.o fitsubs.o iosubs.o mathsubs.o
-         	$(F77) $(FSOFLAGS) $(HOSTLIBS) $(FITLIB) pywrapper.f -o pywrapper.so \
-         	daophot.o pckpsf.o find.o fotometry.o \
-             psf.o peak.o nstar-mcmc_pywrapper.o fudge.o addstar.o substar.o \
-             group.o sort.o lnxsubs.o fitsubs.o \
-         	iosubs.o mathsubs.o
-        ```
-          
-   1. Edit these lines so that `F77` is the correct fortran compiler and `HOSTLIBS` that should include correct paths (this line should already be correct if you are already using DAOPHOT).
-   1. Create the shared library with the command `$ make pywrapper`. A new file `pywrapper.so` has been created.
-   
+
+   Please make sure to use tabulations (and **NOT** spaces) before `$(F77)`.
+
+   *This method has been tested with gfortran from gcc11 installed with MacPorts (`gfortran-mp-11`).*
+
+0. Edit `F77` and `HOSTLIBS` so that they point to your Fortran compiler and runtime libraries.
+0. Build the shared library:
+   ```
+   $ make pywrapper
+   ```
+   A new file `pywrapper.so` has been created.
+
+***
+
+*If you use a CMake-based compilation of DAOPHOT on macOS (with conda-forge), follow this paragraph. This is the recommended path if your DAOPHOT was built with CMake and you use
+a conda-forge gfortran (e.g. on Apple Silicon or Intel Mac with a conda environment).*
+
+2. Activate your Fortran conda environment (here called `daophot`):
+   ```
+   $ conda activate daophot  # adjust to the name of your environment
+   ```
+0. Copy `Fortran_scripts/Makefile.pywrapper` into the CMake `build/` directory of your DAOPHOT installation (the directory with the daophot executables).
+0. Edit the `NSTARWRAP` variable at the top of `Makefile.pywrapper` to point to the `Fortran_scripts/` directory of this repository.
+0. Build the shared library from the `build/` directory:
+   ```
+   $ make -f Makefile.pywrapper
+   ```
+   A new file `pywrapper.so` has been created next to the `daophot` binary.
+
+   The compiler and cfitsio path can be overridden on the command line if needed:
+   ```
+   $ make -f Makefile.pywrapper F77=/path/to/gfortran CFITSIO_DIR=/path/to/cfitsio
+   ```
+   On macOS the Makefile automatically uses `-dynamiclib` instead of `-shared`.
+   On Linux it falls back to `-shared -fPIC`.
+
+> **OpenSSL version compatibility (macOS)**
+> `pywrapper.so` links against cfitsio, which depends on OpenSSL. If you run
+> the tutorials from a *different* Python environment than the one used to build
+> `pywrapper.so` (e.g., a `my_env` environment calling a library built in
+> `daophot` environment), both environments must use the **same major.minor OpenSSL version**,
+> otherwise loading `pywrapper.so` will fail with a `Symbol not found` error.
+>
+> Check the versions with:
+> ```
+> $ conda run -n daophot  python -c "import ssl; print(ssl.OPENSSL_VERSION)"
+> $ conda run -n my_env python -c "import ssl; print(ssl.OPENSSL_VERSION)"
+> ```
+> If they differ, pin the build environment to match your Python environment:
+> ```
+> $ conda install -n daophot openssl=X.Y   # replace X.Y with your Python env's version
+> ```
+> Then rebuild `pywrapper.so` with `make -f Makefile.pywrapper clean && make -f Makefile.pywrapper`.
+
 This is it, you are done!
 
 ### Step 2: Installation of the python package `nstarwrap`
